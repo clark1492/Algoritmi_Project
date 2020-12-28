@@ -1,0 +1,6 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "/home/claudio/Scrivania/LaibAlgo/laboratorio-algoritmi-2019-20/Esercizio_2/**/*.jar"
+    ]
+}
