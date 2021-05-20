@@ -3,123 +3,121 @@
 #include <string.h>
 #include "editdistance.h"
 #include "termlist.h"
+#include "array.h"
 
 #define INITIAL_CAPACITY 2
 
-struct list_term{
+struct term_list{
   char* word;
-  char** array_correction;
-  unsigned long array_cap;
-  unsigned long num_elem;
+  Array* corrections;
   unsigned long edit_d;
 };
 
-static void set_edit(ListTerm* list,unsigned long distance);
-static void clear_terms(ListTerm* list);
+static void clear_terms(TermList* list);
 
-ListTerm* create_ListTerm(char* string) {
+TermList* termlist_create(char* string) {
   if(string == NULL){
-    fprintf(stderr,"the word cannot be null\n");
+    fprintf(stderr,"termlist_create: the word cannot be null\n");
     exit(EXIT_FAILURE);
   }
-  ListTerm* list = (ListTerm*)malloc(sizeof(ListTerm));
+  TermList* list = (TermList*)malloc(sizeof(TermList));
   if(list == NULL){
-    fprintf(stderr, "create_ListTerm: unable to allocate memory for the terms list\n");
+    fprintf(stderr, "termlist_create: unable to allocate memory for the terms list\n");
     exit(EXIT_FAILURE);
   }
-  list->word = string;
-  list->array_correction = (char**)malloc(sizeof(char*)*INITIAL_CAPACITY);
-  if(list->array_correction == NULL){
-    fprintf(stderr, "create_ListTerm: unable to allocate memory for the array of corrections\n");
+  list->word = (char*)malloc(sizeof(char));
+  strcpy(list->word,string);
+  list->corrections = array_create();
+  if(list->corrections == NULL){
+    fprintf(stderr, "termlist_create: unable to allocate memory for the array of corrections\n");
     exit(EXIT_FAILURE);
   }
-  list->array_cap = INITIAL_CAPACITY;
-  list->num_elem = 0;
   list->edit_d = strlen(list->word);
   
-  return list;
+  return (list);
 }
 
-void print_list(ListTerm* list){
+unsigned long termlist_size(TermList* list){
   if(list == NULL){
-    fprintf(stderr, "print: list cannot be null\n");
+    fprintf(stderr,"termlist_size: list cannot be null\n");
     exit(EXIT_FAILURE);
   }
-  printf("The word examined is %s\nThe terms list with edit distance %lu is:\n",list->word,list->edit_d);
-  for(unsigned long i = 0; i < list->num_elem; i++)
-    printf(" - %s\n",list->array_correction[i]);
+  unsigned long size = array_size(list->corrections);
+  return (size);
 }
 
-int is_empty(ListTerm* list){
+void termlist_add(TermList* list, char* string){
   if(list == NULL){
-    fprintf(stderr, "is_empty: list cannot be null\n");
-    exit(EXIT_FAILURE);
-  }
-  return (list->num_elem == 0)? 1:0;
-}
-
-void add_term(ListTerm* list, char* string){
-  if(list == NULL){
-    fprintf(stderr,"add_term: list cannot be null\n");
+    fprintf(stderr,"termlist_add: list cannot be null\n");
     exit(EXIT_FAILURE);
   }
   if(string == NULL){
-    fprintf(stderr,"add_term: string cannot be null\n");
+    fprintf(stderr,"termlist_add: string cannot be null\n");
     exit(EXIT_FAILURE);
   }
+  
   unsigned long dist = edit_distance_dyn(list->word,string);
-  if(list->num_elem == 0){
-    set_edit(list,dist);
-    list->array_correction[list->num_elem] = string;  
+  //primo termine 
+  unsigned long size = array_size(list->corrections);
+  if(size == 0){
+    list->edit_d = dist;
+    array_add(list->corrections,string);
   }
   else {
-    if(list->edit_d < dist)
+    if(dist > list->edit_d)
       return;
-    if(list->edit_d > dist){
-      clear_terms(list);
-      set_edit(list,dist);
-      list->array_correction[list->num_elem] = string;
-      list->num_elem++;
+    if(dist == list->edit_d){
+      array_add(list->corrections,string);
       return;
     }
-    if(list->array_cap <= list->num_elem)
-      list->array_cap *= 2; 
-    list->array_correction[list->num_elem] = string;
-    list->num_elem++;
+    clear_terms(list);
+    list->edit_d = dist;
+    array_add(list->corrections,string);
   }
 }
 
-char* get_word(ListTerm* list){
+char* termlist_get_word(TermList* list){
   if(list == NULL){
-    fprintf(stderr,"get_word: list cannot be null\n");
+    fprintf(stderr,"termlist_get_word: list cannot be null\n");
     exit(EXIT_FAILURE);
   }
-  return list->word;
+  return (list->word);
 }
 
-char* get_correction(ListTerm* list, unsigned long index){
+char* termlist_get_corr(TermList* list, unsigned long index){
   if(list == NULL){
-    fprintf(stderr,"get_correction: list cannot be null\n");
+    fprintf(stderr,"termlist_get_corr: list cannot be null\n");
     exit(EXIT_FAILURE);
   }
-  return list->array_correction[index];
+  if(index >= array_size(list->corrections)){
+    fprintf(stderr,"termlist_get_corr: index out of bound\n");
+    exit(EXIT_FAILURE);
+  }
+  return array_get(list->corrections,index);
 }
 
-void free_list(ListTerm* list){
-  clear_terms(list);
+void termlist_free(TermList* list){
+  if(list == NULL){
+    fprintf(stderr,"termlist_free: list cannot be null\n");
+    exit(EXIT_FAILURE);
+  }
+  array_free_memory(list->corrections);
   free(list->word);
-  free(list->array_correction);
   free(list);
 }
 
-static void set_edit(ListTerm* list,unsigned long distance){
-  list->edit_d = distance; 
+void termlist_print(TermList* list){
+  if(list == NULL){
+    fprintf(stderr, "print_list: list cannot be null\n");
+    exit(EXIT_FAILURE);
+  }
+  printf("WORD EXAMINED <%s> EDIT-DISTANCE <%lu> :\n",list->word,list->edit_d);
+  unsigned long size = array_size(list->corrections);
+  for(unsigned long i = 0; i < size; i++)
+    printf("- <%s>\n",(char*)array_get(list->corrections,i));
 }
 
-static void clear_terms(ListTerm* list){
-  for(unsigned long i = 0; i < list->num_elem; i++)
-    free(list->array_correction[i]);
-  set_edit(list,strlen(list->word));
-  list->array_cap = INITIAL_CAPACITY;
-  list->num_elem = 0;
+static void clear_terms(TermList* list){
+  array_free_memory(list->corrections);
+  list->corrections = array_create();
 }

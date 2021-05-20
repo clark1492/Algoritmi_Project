@@ -6,8 +6,9 @@
 #define INIT 1
 #define NOT_INIT 0
 #define MAX_BUFF 1024
+#define MAX_COL 1000
 
-static unsigned long rec_edit_distance_dyn(char* s1,char* s2, unsigned long n, unsigned long m,unsigned long** mat, int** i_mat);
+static unsigned long rec_edit_distance_dyn(char* s1,char* s2, unsigned long n, unsigned long m,unsigned long mat [][MAX_COL], int i_mat[][MAX_COL]);
 static unsigned long min(unsigned long op_1, unsigned long op_2);
 
 unsigned long edit_distance(char* s1, char* s2){
@@ -27,38 +28,32 @@ unsigned long edit_distance(char* s1, char* s2){
 }
 
 unsigned long edit_distance_dyn(char* s1, char*s2){
-  printf("-1");
   unsigned long l1 = strlen(s1);
   unsigned long l2 = strlen(s2);
-  printf("0");
-  unsigned long** mat = (unsigned long**) malloc(sizeof(unsigned long*)*(l1+1));
-  int** i_mat = (int**) malloc(sizeof(int*)*(l1+1));
-  printf("1");
+  unsigned long mat[l1+1][MAX_COL];
+  int i_mat[l1+1][MAX_COL];
   unsigned long i,j;
 
   for(i = 0; i <= l1; i++){
-    *mat = (unsigned long*) malloc(sizeof(unsigned long)* (l2+1));
-    *i_mat = (int*) malloc(sizeof(int)* (l2+1));
-    printf("%lu",i);
-    for(j = 0; j <= l2; j++){
-      printf("%lu",j);
-      if(j == 0 ){
-        mat[i][j] = i;
-        i_mat[i][j] = INIT;
-      }
-      if(i == 0){
-        mat[i][j] = j;
-        i_mat[i][j] = INIT; 
-      }
-      i_mat[i][j] = NOT_INIT;
+    mat[i][0] = i; 
+    i_mat[i][0] = INIT;
+  }
+  for(j = 0; j <= l2; j++){
+    mat[0][j] = j;
+    i_mat[0][j] = INIT; 
+  }
+  for(i = 1; i <= l1; i++){
+    for(j = 1; j <= l2; j++){
       mat[i][j] = 0;
+      i_mat[i][j] = NOT_INIT;
     }
   }
-  printf("3");
-  return rec_edit_distance_dyn(s1,s2,l1,l2,mat,i_mat);
+  unsigned long ret = rec_edit_distance_dyn(s1,s2,l1,l2,mat,i_mat);
+  return ret;
+
 }
 
-static unsigned long rec_edit_distance_dyn(char* s1,char* s2, unsigned long n, unsigned long m, unsigned long** mat, int** i_mat){
+static unsigned long rec_edit_distance_dyn(char* s1,char* s2, unsigned long n, unsigned long m, unsigned long mat[][MAX_COL], int i_mat[][MAX_COL]){
   //se già definito restituisci
   if(i_mat[n][m] != NOT_INIT)
     return mat[n][m];
@@ -71,14 +66,15 @@ static unsigned long rec_edit_distance_dyn(char* s1,char* s2, unsigned long n, u
       mat[n][m] = rec_edit_distance_dyn(s1,s2,n-1,m-1,mat,i_mat);
   } 
   
-  //se i caratteri sono diverso
-  else {
+  //se i caratteri sono diversi
+  else{
     unsigned long m1,m2;
     
     if(i_mat[n-1][m] != NOT_INIT)   
       m1 = mat[n-1][m];                
     else {
       m1 = rec_edit_distance_dyn(s1, s2, n-1, m, mat, i_mat);
+      mat[n-1][m] = m1;
       i_mat[n-1][m] = INIT;
     }      
                
@@ -86,11 +82,11 @@ static unsigned long rec_edit_distance_dyn(char* s1,char* s2, unsigned long n, u
       m2 = mat[n][m-1];            
     else  {
       m2 = rec_edit_distance_dyn(s1, s2, n, m-1, mat, i_mat);
+      mat[n][m-1] = m2;
       i_mat[n][m-1] = INIT;
     }
     mat[n][m] = 1 + min(m1,m2);
   }
-  
   i_mat[n][m] = INIT;
   return mat[n][m];
 }

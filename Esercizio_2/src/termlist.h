@@ -1,11 +1,11 @@
 #pragma once 
 
-typedef struct list_term ListTerm;
+typedef struct term_list TermList;
 
-ListTerm* create_ListTerm(char*);
-void print_list(ListTerm*);
-int is_empty(ListTerm*);
-void add_term(ListTerm*, char*);
-char* get_word(ListTerm*);
-char* get_correction(ListTerm*, unsigned long);
-void free_list(ListTerm*);
+TermList* termlist_create(char*);
+unsigned long termlist_size(TermList*);
+void termlist_add(TermList*, char*);
+char* termlist_get_word(TermList*);
+char* termlist_get_corr(TermList*, unsigned long);
+void termlist_free(TermList*);
+void termlist_print(TermList*);

@@ -1,12 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "termlist.h"
 #include "array.h"
 
 #define BUFF_SIZE 1024
+#define DELIM " ,;.:\"'-?!\n"
 
-static unsigned long num_list;
+static  void print_array(Array* array);
 
 static void load_data(const char* filepath, Array* arr_str){
   char *read_line_p;
@@ -25,43 +27,54 @@ static void load_data(const char* filepath, Array* arr_str){
       exit(EXIT_FAILURE);
     }
     strcpy(read_line_p,buffer);
-    char* punt = " ,;.:-_";
-    char *token = strtok(read_line_p,punt);
+    char* punct = DELIM;
+    char *token = strtok(read_line_p,punct);
     while(token != NULL){
+      if(token[0] >= 'A' && token[0] <= 'Z')
+        token[0]+= (char)32;
       array_add(arr_str,token);
-      token = strtok(NULL,punt);
+      token = strtok(NULL,punct);
     }
   }
   fclose(fp);
   printf("\nData loaded\n");
 }
 
-static void min_edit_distance(ListTerm** list, Array* word, Array* dict){
-  unsigned long num_words = array_size(word);
-  num_list = num_words;
-  for(unsigned long i  = 0; i < num_words; i++){
-    list[i] = create_ListTerm(array_get(word,i));
-    unsigned long num_corr = array_size(dict);
-    for(unsigned long j = 0; j < num_corr; j++)
-      add_term(list[i],array_get(dict,j));
-  }
-}
-
-static void print_every_list(ListTerm** list){
-  for(unsigned long i = 0; i < num_list; i++){
-    print_list(list[i]);
+static void min_edit_distance(TermList* list, Array* array){
+  unsigned long size_dict = array_size(array);
+  for(unsigned long i = 0; i < size_dict; i++){
+    char* exam = (char*)array_get(array,i);
+    termlist_add(list,exam);
   }
 }
 
 static void test_with_edit_distance(const char* filepath_1, const char* filepath_2){
   Array* text = array_create();
-  Array* dict = array_create();
   load_data(filepath_1,text);
+  Array* dict = array_create();
   load_data(filepath_2,dict);
   unsigned long num_wrd = array_size(text);
-  ListTerm** list = (ListTerm**)malloc(sizeof(ListTerm*)* num_wrd);
-  min_edit_distance(list,text,dict);
-  print_every_list(list);
+  
+  TermList** list = (TermList**)malloc(sizeof(TermList*)*num_wrd);
+  for(unsigned long i = 0; i < num_wrd; i++){
+    char* word = (char*)array_get(text,i);
+    list[i] = termlist_create(word);
+    min_edit_distance(list[i],dict);
+    termlist_print(list[i]);
+    termlist_free(list[i]);
+  }
+  array_free_memory(text);
+  array_free_memory(dict);
+  free(list);
+}
+
+static  void print_array(Array* array){
+  unsigned long el_num =  array_size(array);
+  
+  for(unsigned long i=0;i<el_num;i++){
+    char* array_element = (char *)array_get(array, i);
+    printf("<%s>\n",array_element); 
+  }
 }
 
 int main(int argc, char const *argv[]){
@@ -74,4 +87,3 @@ int main(int argc, char const *argv[]){
 
   return (EXIT_SUCCESS);
 }
-

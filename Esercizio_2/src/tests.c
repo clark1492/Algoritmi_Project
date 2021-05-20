@@ -13,6 +13,21 @@ static void test_same_word(){
   TEST_ASSERT_EQUAL_UINT(0,e);
 }
 
+static void test_word_with_char_in_common1(){
+  unsigned long e = edit_distance_dyn(s[0],s[1]);
+  TEST_ASSERT_EQUAL_UINT(1,e);
+}
+
+static void test_word_with_char_in_common2(){
+  unsigned long e = edit_distance_dyn(s[2],s[3]);
+  TEST_ASSERT_EQUAL_UINT(2,e);
+}
+
+static void test_word_with_char_in_common3(){
+  unsigned long e = edit_distance_dyn(s[4],s[5]);
+  TEST_ASSERT_EQUAL_UINT(4,e);
+}
+
 static void test_all_different_char_same_length(){
   unsigned long e = edit_distance_dyn(s[1],s[3]);
   TEST_ASSERT_EQUAL_UINT(strlen(s[1])+strlen(s[3]),e);
@@ -40,6 +55,9 @@ int main(void)
   UNITY_BEGIN();
 
   RUN_TEST(test_same_word);
+  RUN_TEST(test_word_with_char_in_common1);
+  RUN_TEST(test_word_with_char_in_common2);
+  RUN_TEST(test_word_with_char_in_common3);
   RUN_TEST(test_all_different_char_same_length);
   RUN_TEST(test_all_different_char_different_length);
   RUN_TEST(test_with_empty_string);
