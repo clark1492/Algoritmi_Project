@@ -1,169 +1,97 @@
 package unionfind;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
+ * Implementation of a union-find set, implemented using HashMap.
+ * The find operation is implemented using the path compression method, and the
+ * union by rank operation.
  * 
- * @author esposito
  * @param <T>: type of the union find
  */
 
 public class UnionFind<T> {
+  private Map<T, T> parenthood = new HashMap<>();
+  private Map<T, Integer> rank = new HashMap<>();
 
-  private class Node<T> {
-    private T element;
-    private Integer rank;
-  }
-
-  private Map<Node<T>, Set<Node<T>>> map = null;
-
-  public UnionFind(List<T> elements) throws UnionFindException {
-    if (elements == null)
-      throw new UnionFindException("UnionFind: elements cannot be null\n");
-    if (elements.isEmpty())
-      throw new UnionFindException("UnionFind: list elements cannot be empty\n");
-    this.map = new HashMap<Node<T>, Set<Node<T>>>();
-    Iterator<T> it = elements.iterator();
-    while (it.hasNext()) {
-      T el = (T) it.next();
-      Node<T> node = new Node<T>();
-      node.element = el;
-      node.rank = 0;
-      Set<Node<T>> set = new HashSet<Node<T>>();
-      set.add(node);
-      this.map.put(node, set);
-    }
-  }
-
-  public void addElement(T element) throws UnionFindException {
+  /**
+   * Method creates a set with the passed element, set its representative with
+   * itself and set rank to zero
+   * 
+   * @param element
+   * @throws UnionFindException
+   */
+  public void makeSet(T element) throws UnionFindException {
     if (element == null)
-      throw new UnionFindException("addElement: element cannot be null\n");
-    Node<T> node = new Node<T>();
-    node.element = element;
-    node.rank = 0;
-    Set<Node<T>> set = new HashSet<Node<T>>();
-    set.add(node);
-    this.map.put(node, set);
+      throw new UnionFindException("makeSet: element cannot be null");
+    parenthood.put(element, element);
+    rank.put(element, (Integer) 0);
   }
 
+  /**
+   * Method returns the representative of the passed element using path
+   * compression
+   * 
+   * @param child
+   * @return
+   * @throws UnionFindException
+   */
   public T findSet(T element) throws UnionFindException {
     if (element == null)
-      throw new UnionFindException("addElement: element cannot be null");
-
-    Set<Node<T>> keySet = this.map.keySet();// prelevo le chiavi
-    for (Node<T> key : keySet) {
-      Set<Node<T>> valueSet = map.get(key);// per ogni chiavi prendo set di values
-      if (valueSet.contains(getNode(element))) { // se il set contiene element restituisco la chiave
-        return key.element;
-      }
+      throw new UnionFindException("findSet: element cannot be null");
+    if (parenthood.isEmpty())
+      throw new UnionFindException("findSet: parenthood cannot be empty");
+    T father = parenthood.get(element);
+    if (element != father) {
+      father = findSet(father);
+      parenthood.put(element, father);
     }
-    throw new UnionFindException("addElement: element not present");
+    return father;
   }
 
-  public boolean inSameSet(T element1, T element2) throws UnionFindException {
-    if (element1 == null || element2 == null)
-      throw new UnionFindException("inSameSet: elements cannot be null");
-    return findSet(element1).equals(findSet(element2)) ? true : false;
-  }
-
-  public int numberOfSets() {
-    return this.map.size();
-  }
-
-  public void reset() {
-    Set<Node<T>> keySet = this.map.keySet();
-    List<Node<T>> valueList = new ArrayList<>();
-    for (Node<T> key : keySet) {
-      Set<Node<T>> valueSet = this.map.get(key);
-      for (Node<T> node : valueSet)
-        valueList.add(node);
-    }
-    this.map.clear();
-    Iterator<Node<T>> it = valueList.iterator();
-    while (it.hasNext()) {
-      Node<T> newNode = (Node<T>) it.next();
-      Set<Node<T>> newSet = new HashSet<Node<T>>();
-      newSet.add(newNode);
-      this.map.put(newNode, newSet);
-    }
-  }
-
-  public int size() {
-    int n_elem = 0;
-    Set<Node<T>> keySet = map.keySet();// prelevo le chiavi
-    for (Node<T> key : keySet) {
-      Set<Node<T>> valueSet = map.get(key);// per ogni chiavi prendo set di values
-      n_elem += valueSet.size();
-    }
-    return n_elem;
-  }
-
-  public String toString() {
-    String result = new String();
-    result = null;
-
-    Set<Node<T>> keySet = map.keySet();// prelevo le chiavi
-    result += "ELEMENT : REPRESENTATIVE KEY\n";
-    for (Node<T> key : keySet) {
-      Set<Node<T>> valueSet = map.get(key);// per ogni chiavi prendo set di values
-      for (Node<T> value : valueSet)
-        result += value.element + "\t:\t" + key.element + "\n";
-    }
-    return result;
-  }
-
-  public void union(T element1, T element2) throws UnionFindException {
-    if (element1 == null || element2 == null || element1 == element2)
+  /**
+   * Method unites two sets.The element with the greater ranked rapresentative
+   * become the representative of the second one's representative.
+   * 
+   * @param elementX
+   * @param elementY
+   * @throws UnionFindException
+   */
+  public void union(T elementX, T elementY) throws UnionFindException {
+    if (elementX == null || elementY == null)
       throw new UnionFindException("union: elements cannot be null");
-    link(findSet(element1), findSet(element2));
+    if (elementX == elementY)
+      throw new UnionFindException("union: elements must be different");
+    if (!parenthood.containsKey(elementX) || !parenthood.containsKey(elementY))
+      throw new UnionFindException("union: elements must be in the sets");
+    link(elementX, elementY);
   }
 
-  private void link(T elementx, T elementy) throws UnionFindException {
+  /**
+   * Method that combines two sets.
+   * 
+   * @param elementX
+   * @param elementY
+   * @throws UnionFindException
+   */
+  private void link(T elementX, T elementY) throws UnionFindException {
 
-    Node<T> nodeX = getNode(elementx);
-    Node<T> nodeY = getNode(elementy);
-    Set<Node<T>> setX = null;
-    Set<Node<T>> setY = null;
+    T rootX = findSet(elementX);
+    T rootY = findSet(elementY);
+    Integer rankX = rank.get(rootX);
+    Integer rankY = rank.get(rootY);
 
-    if (this.map.containsKey(nodeY) && this.map.containsKey(nodeX)) {
-      setY = this.map.get(nodeY);
-      setX = this.map.get(nodeX);
-      if (setX != null && setY != null) {
-        if (nodeX.rank > nodeY.rank) {
-          setX.addAll(setY);
-          this.map.remove(nodeY);
-          this.map.put(nodeX, setX);
-        } else {
-          if (nodeX.rank == nodeY.rank)
-            nodeY.rank++;
-          setY.addAll(setX);
-          this.map.remove(nodeX);
-          this.map.put(nodeY, setY);
-        }
-      }
+    if (rootX == null || rootY == null)
+      throw new UnionFindException("link: root element cannot be null");
+    if (rootX == rootY) // the elements belongs to the same set
+      return;
+    if (rankX.compareTo(rankY) > 0) // rootX's rank is higher than rootY's one
+      parenthood.put(rootY, rootX); // the root of element Y points to the root of the element X
+    else { // the two ranks are equal or rankY is higher than rankX
+      parenthood.put(rootX, rootY); // the root of element X points to the root of the element Y
+      if (rankX.equals(rankY)) // the two ranks are equal so the rankY is increased by one
+        rank.put(rootY, rankY.intValue() + 1);
     }
-  }
-
-  private Node<T> getNode(T element) throws UnionFindException {
-    Node<T> found = new Node<>();
-    found = null;
-
-    Set<Node<T>> keySet = map.keySet(); // prelevo tutte le chaivi
-    for (Node<T> key : keySet) { // percorro ogni singola chiave
-      Set<Node<T>> valueSet = map.get(key);
-      for (Node<T> node : valueSet)
-        if ((node.element).equals(element))
-          found = node;
-    }
-    if (found != null)
-      return found;
-    else
-      throw new UnionFindException("getNode: element not present");
   }
 }

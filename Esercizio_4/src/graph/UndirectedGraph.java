@@ -1,5 +1,11 @@
 package graph;
 
+/**
+ * The data structure of a undirected graph that it could be weighted or not
+ * 
+ * @param <T>: nodes label type
+ * @param <U>: edges label type
+ */
 public class UndirectedGraph<T, U> extends DirectedGraph<T, U> {
 
   /**
@@ -8,7 +14,7 @@ public class UndirectedGraph<T, U> extends DirectedGraph<T, U> {
    */
   public UndirectedGraph() {
     super();
-  }// constructor
+  }
 
   /**
    * Method returns if the graph is directed
@@ -18,20 +24,20 @@ public class UndirectedGraph<T, U> extends DirectedGraph<T, U> {
   @Override
   public boolean isDirected() {
     return false;
-  }// isDirected
+  }
 
   /**
-   * Method returns the number if the edges of the graph
+   * Method returns the number of the edges of the graph
    * 
    * @return
    */
   @Override
   public int getEdgeSize() {
     return super.getEdgeSize() / 2;
-  }// getEdgeSize
+  }
 
   /**
-   * Method adds an edge, passing the values of the nodes of the edge
+   * Method adds an edge, passing the values of the edge's node
    * 
    * @param source
    * @param destination
@@ -41,7 +47,7 @@ public class UndirectedGraph<T, U> extends DirectedGraph<T, U> {
   @Override
   public boolean addEdge(T source, T destination, U edgeLabel) {
     return super.addEdge(source, destination, edgeLabel) && super.addEdge(destination, source, edgeLabel);
-  }// addEdge
+  }
 
   /**
    * Method adds an edge, passing the nodes of the edge
@@ -54,7 +60,7 @@ public class UndirectedGraph<T, U> extends DirectedGraph<T, U> {
   @Override
   public boolean addEdge(Node<T> source, Node<T> destination, U edgeLabel) {
     return super.addEdge(source, destination, edgeLabel) && super.addEdge(destination, source, edgeLabel);
-  }// addEdge
+  }
 
   /**
    * Method adds an edge, passing the edge to add
@@ -68,7 +74,7 @@ public class UndirectedGraph<T, U> extends DirectedGraph<T, U> {
       return false;
     return super.addEdge(edge.getSource(), edge.getDestination(), edge.getEdgeLabel())
         && super.addEdge(edge.getDestination(), edge.getSource(), edge.getEdgeLabel());
-  }// addEdge
+  }
 
   /**
    * Method removes an edge, passing the nodes of the edge
@@ -80,7 +86,7 @@ public class UndirectedGraph<T, U> extends DirectedGraph<T, U> {
   @Override
   public boolean removeEdge(Node<T> source, Node<T> destination) {
     return super.removeEdge(source, destination) && super.removeEdge(destination, source);
-  }// removeEdge
+  }
 
   /**
    * Method adds an edge, passing the edge to remove
@@ -94,15 +100,16 @@ public class UndirectedGraph<T, U> extends DirectedGraph<T, U> {
       return false;
     return super.removeEdge(edgeToRemove.getSource(), edgeToRemove.getDestination())
         && super.removeEdge(edgeToRemove.getDestination(), edgeToRemove.getSource());
-  }// removeEdge
+  }
 
   /**
    * Method returns the graph's weight
    * 
+   * @throws GraphException
    * @return
    */
   @Override
   public double getGraphWeight() throws GraphException {
     return super.getGraphWeight() / 2;
-  }// getGraphWeight
-}// class
+  }
+}

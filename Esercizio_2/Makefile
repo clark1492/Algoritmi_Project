@@ -1,5 +1,10 @@
+all: bin/edit_distance bin/edit_distance_tests
 
-all: bin/tests bin/editdistance
+run_app: 
+				./bin/edit_distance ../Data/correctme.txt ../Data/dictionary.txt
+
+run_test: 
+				./bin/edit_distance_tests
 
 CFLAGS = -g -Wall -Wextra -Wpedantic -Wconversion
 
@@ -10,11 +15,11 @@ COMMON_DEPS = $(INCLUDES) Makefile
 build/%.o: src/%.c $(COMMON_DEPS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-bin/editdistance: build/main.o build/char_array.o build/termlist.o build/editdistance.o $(COMMON_DEPS)
-	$(CC) -o bin/editdistance build/main.o build/char_array.o build/termlist.o build/editdistance.o 
+bin/edit_distance: build/edit_distance_main.o build/string_array.o build/termlist.o build/edit_distance.o $(COMMON_DEPS)
+	$(CC) -o bin/edit_distance build/edit_distance_main.o build/string_array.o build/termlist.o build/edit_distance.o 
 
-bin/tests: build/tests.o build/editdistance.o build/unity.o $(COMMON_DEPS)
-	$(CC) -o bin/tests build/tests.o build/editdistance.o build/unity.o
+bin/edit_distance_tests: build/edit_distance_tests.o build/edit_distance.o build/unity.o $(COMMON_DEPS)
+	$(CC) -o bin/edit_distance_tests build/edit_distance_tests.o build/edit_distance.o build/unity.o
 
 clean:
 	rm -f build/* bin/*

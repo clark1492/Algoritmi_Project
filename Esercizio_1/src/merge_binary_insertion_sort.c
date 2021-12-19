@@ -25,9 +25,9 @@ void merge_binary_insertion_sort(void *base, size_t nitems, size_t memSize, comp
     fprintf(stderr, "merge_binary_insertion_sort: size of the array cannot be equal-less than zero\n");
     exit(EXIT_FAILURE);
   }
-  if (k_value >= nitems)
+  if (k_value > nitems)
   {
-    fprintf(stderr, "merge_binary_insertion_sort: k_value cannot be equal_greater than number of items of the array or less than zero\n");
+    fprintf(stderr, "merge_binary_insertion_sort: k_value cannot be higher than number of items of the array or less than zero\n");
     exit(EXIT_FAILURE);
   }
   char *temp_array = (char *)malloc(sizeof(char) * memSize * nitems);

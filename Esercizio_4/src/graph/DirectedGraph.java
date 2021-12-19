@@ -5,20 +5,25 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Set;
 
+/**
+ * The data structure of a directed graph that it could be weighted or not
+ * 
+ * @param <T>: nodes label type
+ * @param <U>: edges label type
+ */
 public class DirectedGraph<T, U> {
 
   protected Map<Node<T>, Map<Node<T>, Edge<T, U>>> adjacencyList;
   protected boolean isWeighted;
 
   /**
-   * Method constructs the struct of empty Graph
-   *
+   * Method constructs the struct of empty DirecteGraph
    */
   public DirectedGraph() {
 
     this.isWeighted = false;
     this.adjacencyList = new HashMap<>();
-  }// construct
+  }
 
   /**
    * Setter for the isWeighted variable
@@ -27,7 +32,7 @@ public class DirectedGraph<T, U> {
    */
   public void setIsWeighted(boolean isWeighted) {
     this.isWeighted = isWeighted;
-  }// setIsWeighted
+  }
 
   /**
    * Method returns true if the graph is weighted
@@ -36,7 +41,7 @@ public class DirectedGraph<T, U> {
    */
   public boolean isWeighted() {
     return this.isWeighted;
-  }// isWeighted
+  }
 
   /**
    * Method returns true if the graph is directed
@@ -45,17 +50,17 @@ public class DirectedGraph<T, U> {
    */
   public boolean isDirected() {
     return true;
-  }// isDirected
+  }
 
   /**
-   * Method adds node to the graph from it value
+   * Method adds node to the graph from its value passed as parameter
    * 
    * @param nodeValue
    * @return
    */
   public boolean addNode(T nodeValue) {
     return this.addNode(new Node<>(nodeValue));
-  }// addNode
+  }
 
   /**
    * Method adds node to the graph
@@ -67,7 +72,7 @@ public class DirectedGraph<T, U> {
     if (node == null || node.getNodeValue() == null)
       return false;
     return adjacencyList.putIfAbsent(node, new HashMap<>()) == null;
-  }// addNode
+  }
 
   /**
    * Method adds edge to the graph from its values
@@ -79,7 +84,7 @@ public class DirectedGraph<T, U> {
    */
   public boolean addEdge(T source, T destination, U edgeLabel) {
     return this.addEdge(new Node<>(source), new Node<>(destination), edgeLabel);
-  }// addEdge
+  }
 
   /**
    * Method adds edge to the graph from its nodes values
@@ -99,7 +104,7 @@ public class DirectedGraph<T, U> {
       return adjacencyList.get(source).putIfAbsent(destination, new Edge<>(source, destination, edgeLabel)) == null;
     }
     return false;
-  }// addEdge
+  }
 
   /**
    * Method adds edge to the graph
@@ -111,20 +116,20 @@ public class DirectedGraph<T, U> {
     if (edge == null)
       return false;
     return this.addEdge(edge.getSource(), edge.getDestination(), edge.getEdgeLabel());
-  }// addEdge
+  }
 
   /**
-   * Method returns true if a node is conteined in the graph, passing a value
+   * Method returns true if a node is contained in the graph, passing a value
    *
    * @param nodeValue
    * @return
    */
   public boolean containsNode(T nodeValue) {
     return containsNode(new Node<>(nodeValue));
-  }// containsNode
+  }
 
   /**
-   * Method returns true if a node is conteined in the graph, passing the node
+   * Method returns true if a node is contained in the graph, passing the node
    * itself
    * 
    * @param node
@@ -132,10 +137,10 @@ public class DirectedGraph<T, U> {
    */
   public boolean containsNode(Node<T> node) {
     return adjacencyList.containsKey(node);
-  }// containsNode
+  }
 
   /**
-   * Method returns true if a edge is conteined in the graph, passing the nodes
+   * Method returns true if a edge is contained in the graph, passing the nodes
    * values of the edge
    * 
    * @param source
@@ -144,10 +149,10 @@ public class DirectedGraph<T, U> {
    */
   public boolean containsEdge(T source, T destination) {
     return this.containsEdge(new Node<>(source), new Node<>(destination));
-  }// containsEdge
+  }
 
   /**
-   * Method returns true if a edge is conteined in the graph, passing the nodes of
+   * Method returns true if a edge is contained in the graph, passing the nodes of
    * the edge
    * 
    * @param source
@@ -159,10 +164,10 @@ public class DirectedGraph<T, U> {
       return adjacencyList.get(source).containsKey(destination);
     }
     return false;
-  }// containsEdge
+  }
 
   /**
-   * Method returns true if a edge is conteined in the graph, passing the edge
+   * Method returns true if a edge is contained in the graph, passing the edge
    * itself
    * 
    * @param edge
@@ -172,7 +177,7 @@ public class DirectedGraph<T, U> {
     if (edge == null)
       return false;
     return containsEdge(edge.getSource(), edge.getDestination());
-  }// containsEdge
+  }
 
   /**
    * Methods removes node, passing a value
@@ -182,7 +187,7 @@ public class DirectedGraph<T, U> {
    */
   public boolean removeNode(T nodeValue) {
     return this.removeNode(new Node<>(nodeValue));
-  }// removeNode
+  }
 
   /**
    * Methods removes node, passing the node itself
@@ -200,7 +205,7 @@ public class DirectedGraph<T, U> {
       entry.getValue().remove(node);
     }
     return adjacencyList.remove(node) != null;
-  }// removeNode
+  }
 
   /**
    * Methods removes edge, passing the edge itself
@@ -212,7 +217,7 @@ public class DirectedGraph<T, U> {
     if (edge == null)
       return false;
     return this.removeEdge(edge.getSource(), edge.getDestination());
-  }// removeEdge
+  }
 
   /**
    * Methods removes edge, passing the nodes of the edge
@@ -230,7 +235,7 @@ public class DirectedGraph<T, U> {
     if (adjacencyList.containsKey(source))
       return adjacencyList.get(source).remove(destination) != null;
     return false;
-  }// removeEdge
+  }
 
   /**
    * Methods removes edge, passing the nodes values of the edge
@@ -241,7 +246,7 @@ public class DirectedGraph<T, U> {
    */
   public boolean removeEdge(T source, T destination) {
     return this.removeEdge(new Node<>(source), new Node<>(destination));
-  }// removeEdge
+  }
 
   /**
    * Method returns the number of the nodes of the graph
@@ -250,7 +255,7 @@ public class DirectedGraph<T, U> {
    */
   public int getNodeSize() {
     return adjacencyList.size();
-  }// getNodeSize
+  }
 
   /**
    * Method returns the number of the edges of the graph
@@ -264,7 +269,7 @@ public class DirectedGraph<T, U> {
       edgeSize += adjacencyList.get(key).size();
     }
     return edgeSize;
-  }// getEdgeSize
+  }
 
   /**
    * Method returns the list of the nodes
@@ -277,7 +282,7 @@ public class DirectedGraph<T, U> {
     for (Node<T> key : set)
       nodeList.add(key);
     return nodeList;
-  }// getNodes
+  }
 
   /**
    * Method returns the list of the edges
@@ -290,7 +295,7 @@ public class DirectedGraph<T, U> {
     for (Node<T> key : setNode)
       edgeList.addAll(adjacencyList.get(key).values());
     return edgeList;
-  }// getEdges
+  }
 
   /**
    * Method returns the list of the nodes adjacent to the passed node
@@ -307,7 +312,7 @@ public class DirectedGraph<T, U> {
     ArrayList<Node<T>> adjacentNodes = new ArrayList<>();
     adjacentNodes.addAll(adjacencyList.get(node).keySet());
     return adjacentNodes;
-  }// getAdjacentNodes
+  }
 
   /**
    * Method returns the list of the nodes adjacent to the passed node value
@@ -318,7 +323,7 @@ public class DirectedGraph<T, U> {
    */
   public ArrayList<Node<T>> getAdjacentNodes(T nodeValue) throws GraphException {
     return getAdjacentNodes(new Node<>(nodeValue));
-  }// getAdjacentNodes
+  }
 
   /**
    * Method returns the label of the edge of the passed nodes
@@ -335,7 +340,7 @@ public class DirectedGraph<T, U> {
       throw new GraphException("getLabel: nodes values cannot be null");
     Edge<T, U> edge = adjacencyList.get(source).get(destination);
     return edge.getEdgeLabel();
-  }// getLabel
+  }
 
   /**
    * Method returns the label of the edge of the passed nodes values
@@ -347,7 +352,7 @@ public class DirectedGraph<T, U> {
    */
   public U getLabel(T source, T destination) throws GraphException {
     return getLabel(new Node<>(source), new Node<>(destination));
-  }// getLabel
+  }
 
   /**
    * Method returns the graph's weight
@@ -364,5 +369,5 @@ public class DirectedGraph<T, U> {
         graphWeight = graphWeight + edge.getWeight();
 
     return graphWeight;
-  }// getGraphWeight
-}// class
+  }
+}

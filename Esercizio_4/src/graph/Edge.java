@@ -2,6 +2,12 @@ package graph;
 
 import java.util.Objects;
 
+/**
+ * The data structure of graph's edge
+ * 
+ * @param <T>: nodes label type
+ * @param <U>: edges label type
+ */
 public class Edge<T, U> implements Comparable<Edge<T, U>> {
 
   private Node<T> source;
@@ -16,7 +22,7 @@ public class Edge<T, U> implements Comparable<Edge<T, U>> {
    *
    * @param source
    * @param destination
-   * @param weight
+   * @param edgeLabel
    */
   public Edge(Node<T> source, Node<T> destination, U edgeLabel) {
     this.source = source;
@@ -28,18 +34,18 @@ public class Edge<T, U> implements Comparable<Edge<T, U>> {
       isWeighted = true;
     } else
       isWeighted = false;
-  } // construct
+  }
 
   /**
    * Method construct labeled edge between two nodes, passing their values
    *
    * @param source
    * @param destination
-   * @param weight
+   * @param edgeLabel
    */
   public Edge(T source, T destination, U edgeLabel) {
     this(new Node<>(source), new Node<>(destination), edgeLabel);
-  } // construct
+  }
 
   /**
    * Method returns node source
@@ -48,7 +54,7 @@ public class Edge<T, U> implements Comparable<Edge<T, U>> {
    */
   public Node<T> getSource() {
     return this.source;
-  } // getSource
+  }
 
   /**
    * Method returns node destination
@@ -57,7 +63,7 @@ public class Edge<T, U> implements Comparable<Edge<T, U>> {
    */
   public Node<T> getDestination() {
     return this.destination;
-  } // getDestination
+  }
 
   /**
    * Method returns label of an edge
@@ -66,7 +72,7 @@ public class Edge<T, U> implements Comparable<Edge<T, U>> {
    */
   public U getEdgeLabel() {
     return this.edgeLabel;
-  } // getEdgeLabel
+  }
 
   /**
    * Method returns weight of an edge, if the graph is weighted
@@ -78,10 +84,10 @@ public class Edge<T, U> implements Comparable<Edge<T, U>> {
       return edgeWeight;
     else
       throw new UnsupportedOperationException("The edge isn't weighted.");
-  } // getEdgeLabel
+  }
 
   /**
-   * Method returns true if the two obj are the same.
+   * Method returns true if the object passed as parameter is equal to this edge
    *
    * @param toCheck
    * @return
@@ -98,10 +104,10 @@ public class Edge<T, U> implements Comparable<Edge<T, U>> {
     @SuppressWarnings("unchecked")
     Edge<T, U> edgeToCheck = (Edge<T, U>) toCheck;
     return Objects.equals(this.source, edgeToCheck.source) && Objects.equals(this.destination, edgeToCheck.destination);
-  } // equals
+  }
 
   /**
-   * Method to
+   * Returns a string with the description of this edge
    *
    * @return
    */
@@ -109,10 +115,10 @@ public class Edge<T, U> implements Comparable<Edge<T, U>> {
   public String toString() {
     return "Edge{Source: " + this.source.toString() + ", Destination: " + this.destination.toString() + ", EdgeLabel: "
         + this.edgeLabel.toString() + "}";
-  } // toString
+  }
 
   /**
-   * Method compares the twho edge and sort them in increasing mode
+   * Method compares the weights of the edge passed as parameter with this edge
    *
    * @return
    */
@@ -122,6 +128,5 @@ public class Edge<T, U> implements Comparable<Edge<T, U>> {
       return this.edgeWeight.compareTo(edge.getWeight());
     else
       throw new UnsupportedOperationException("The edge isn't weighted.");
-  } // compareTo
-
-}// class
+  }
+}
