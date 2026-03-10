@@ -1,0 +1,86 @@
+# =========================
+# File di sistema
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# File temporanei
+# =========================
+*.log
+*.tmp
+*.swp
+*~
+
+# =========================
+# Java
+# =========================
+
+# File compilati
+*.class
+
+# Package file
+*.jar
+*.war
+*.ear
+
+# Cartelle di build
+target/
+build/
+out/
+
+# Maven
+.mvn/
+.mvn/wrapper/maven-wrapper.jar
+
+# Gradle
+.gradle/
+
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# IntelliJ
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# =========================
+# C / C++
+# =========================
+
+# File oggetto
+*.o
+*.obj
+
+# Librerie
+*.so
+*.a
+*.dll
+*.dylib
+
+# Eseguibili
+*.exe
+*.out
+
+# File generati dal compilatore
+*.dSYM/
+
+# Cartelle di build
+build/
+output/
+cmake-build-*/
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+compile_commands.json
+
+#dataset
+data/records.csv
