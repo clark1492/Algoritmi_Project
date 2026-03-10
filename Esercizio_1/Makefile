@@ -9,7 +9,7 @@ COMMON_DEPS = Makefile
 all: bin/merge_binary_insertion_sort bin/merge_binary_insertion_sort_tests
 
 run_app:
-	./bin/merge_binary_insertion_sort ../Data/records.csv 1 35
+	./bin/merge_binary_insertion_sort ../data/records.csv 1 35
 
 run_test:
 	./bin/merge_binary_insertion_sort_tests

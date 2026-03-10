@@ -1,7 +1,7 @@
 JUNIT = ./lib/junit-4.12.jar
 HAMCREST = ./lib/hamcrest-core-1.3.jar
 CP = ./classes:$(JUNIT):$(HAMCREST)
-FILE ?= ../Data/italian_dist_graph.csv
+FILE ?= ../data/italian_dist_graph.csv
 
 all:
 	mkdir -p classes

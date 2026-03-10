@@ -1,7 +1,7 @@
 all: bin/edit_distance bin/edit_distance_tests
 
 run_app: 
-	./bin/edit_distance ../Data/correctme.txt ../Data/dictionary.txt
+	./bin/edit_distance ../Data/correctme.txt ../data/dictionary.txt
 
 run_test: 
 	./bin/edit_distance_tests
